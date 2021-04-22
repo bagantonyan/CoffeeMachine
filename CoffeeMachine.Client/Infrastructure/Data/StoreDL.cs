@@ -38,7 +38,6 @@ namespace CoffeeMachine.Client.Infrastructure.Data
                         command.Parameters.Add("@Coffee", DbType.Double).Value = coffee;
 
                         command.ExecuteNonQuery();
-                        connection.Close();
                     }
                 }
                 catch (SQLiteException ex)
@@ -63,16 +62,16 @@ namespace CoffeeMachine.Client.Infrastructure.Data
                     {
                         connection.Open();
 
-                        var result = command.ExecuteReader();
+                        var reader = command.ExecuteReader();
 
-                        if (result.Read())
+                        if (reader.Read())
                         {
-                            store.Water = result.GetDouble(1);
-                            store.Sugar = result.GetDouble(2);
-                            store.Coffee = result.GetDouble(3);
+                            store.Water = reader.GetDouble(1);
+                            store.Sugar = reader.GetDouble(2);
+                            store.Coffee = reader.GetDouble(3);
                         }
 
-                        connection.Close();
+                        reader.Close();
                     }
                 }
                 catch (SQLiteException ex)
@@ -82,37 +81,6 @@ namespace CoffeeMachine.Client.Infrastructure.Data
             }
 
             return store;
-        }
-
-        public void UpdateTest()
-        {
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                try
-                {
-                    //var store = GetStore();
-
-                    string query = @"UPDATE Store SET Water = @Water, Sugar = @Sugar, Coffee = @Coffee WHERE Id = 1";
-
-                    using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                    {
-                        //double water = store.Water - product.Water;
-                        //double sugar = store.Sugar - product.Sugar;
-                        //double coffee = store.Coffee - product.Coffee;
-
-                        command.Parameters.Add("@Water", DbType.Double).Value = 0.8;
-                        command.Parameters.Add("@Sugar", DbType.Double).Value = 0.8;
-                        command.Parameters.Add("@Coffee", DbType.Double).Value = 0.8;
-
-                        command.Connection.Open();
-                        command.ExecuteNonQuery();
-                    }
-                }
-                catch (SQLiteException ex)
-                {
-                    throw ex;
-                }
-            }
         }
     }
 }

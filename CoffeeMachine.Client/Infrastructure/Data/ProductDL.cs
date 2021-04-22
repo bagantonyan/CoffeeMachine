@@ -19,30 +19,6 @@ namespace CoffeeMachine.Client.Infrastructure.Data
             _connectionString = Startup.GetDbConnection();
         }
 
-        public void UpdateTest()
-        {
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                try
-                {
-                    string query = @"UPDATE Product SET Water = @Water, Sugar = @Sugar WHERE Id = 1";
-
-                    using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                    {
-                        command.Parameters.Add("@Water", DbType.Double).Value = 0.7;
-                        command.Parameters.Add("@Sugar", DbType.Double).Value = 0.7;
-
-                        command.Connection.Open();
-                        command.ExecuteNonQuery();
-                    }
-                }
-                catch (SQLiteException ex)
-                {
-                    throw ex;
-                }
-            }
-        }
-
         public IEnumerable<Product> GetAllProducts()
         {
             var products = new List<Product>();
@@ -57,25 +33,25 @@ namespace CoffeeMachine.Client.Infrastructure.Data
                     {
                         connection.Open();
 
-                        var result = command.ExecuteReader();
+                        var reader = command.ExecuteReader();
 
-                        if (result.HasRows)
+                        if (reader.HasRows)
                         {
                             Product product = null;
-                            while (result.Read())
+                            while (reader.Read())
                             {
                                 product = new Product();
-                                product.Id = result.GetInt32(0);
-                                product.Name = result.GetString(1);
-                                product.Water = result.GetDouble(2);
-                                product.Sugar = result.GetDouble(3);
-                                product.Coffee = result.GetDouble(4);
-                                product.Price = result.GetDecimal(5);
+                                product.Id = reader.GetInt32(0);
+                                product.Name = reader.GetString(1);
+                                product.Water = reader.GetDouble(2);
+                                product.Sugar = reader.GetDouble(3);
+                                product.Coffee = reader.GetDouble(4);
+                                product.Price = reader.GetDecimal(5);
                                 products.Add(product);
                             }
                         }
 
-                        connection.Close();
+                        reader.Close();
                     }
                 }
                 catch (SQLiteException ex)
@@ -102,19 +78,19 @@ namespace CoffeeMachine.Client.Infrastructure.Data
 
                         connection.Open();
 
-                        var result = command.ExecuteReader();
+                        var reader = command.ExecuteReader();
 
-                        if (result.Read())
+                        if (reader.Read())
                         {
-                            product.Id = result.GetInt32(0);
-                            product.Name = result.GetString(1);
-                            product.Water = result.GetDouble(2);
-                            product.Sugar = result.GetDouble(3);
-                            product.Coffee = result.GetDouble(4);
-                            product.Price = result.GetDecimal(5);
+                            product.Id = reader.GetInt32(0);
+                            product.Name = reader.GetString(1);
+                            product.Water = reader.GetDouble(2);
+                            product.Sugar = reader.GetDouble(3);
+                            product.Coffee = reader.GetDouble(4);
+                            product.Price = reader.GetDecimal(5);
                         }
 
-                        connection.Close();
+                        reader.Close();
                     }
                 }
                 catch (SQLiteException ex)

@@ -9,6 +9,5 @@ namespace CoffeeMachine.Client.Infrastructure.Data.Interfaces
     {
         void TakeIngridients(Store store, Product product);
         Store GetStore();
-        void UpdateTest();
     }
 }

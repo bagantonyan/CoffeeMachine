@@ -9,6 +9,5 @@ namespace CoffeeMachine.Client.Infrastructure.Data.Interfaces
     {
         IEnumerable<Product> GetAllProducts();
         Product GetProductById(int id);
-        void UpdateTest();
     }
 }
