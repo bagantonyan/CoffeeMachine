@@ -1,4 +1,5 @@
-﻿using CoffeeMachine.Client.Infrastructure.Data.Interfaces;
+﻿using CoffeeMachine.Client.Factory;
+using CoffeeMachine.Client.Infrastructure.Data.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace CoffeeMachine.Client
         private decimal balance;
         private readonly IProductDL _productDL;
         private readonly IStoreDL _storeDL;
+        private readonly ICoffeeFactory _coffeeFactory;
 
         public CoffeeMachineManager()
         {
@@ -19,11 +21,10 @@ namespace CoffeeMachine.Client
             var container = Startup.ConfigureServices();
             _productDL = container.GetRequiredService<IProductDL>();
             _storeDL = container.GetRequiredService<IStoreDL>();
+            _coffeeFactory = container.GetRequiredService<ICoffeeFactory>();
         }
         public void Start()
         {
-            //_productDL.UpdateTest();
-            //_storeDL.UpdateTest();
             EnterCoins();
             ChooseCoffee();
         }
@@ -94,8 +95,10 @@ namespace CoffeeMachine.Client
                             _storeDL.TakeIngridients(store,product);
                             balance -= product.Price;
 
-                            Console.WriteLine("Coffee is making, please wait...");
-                            Thread.Sleep(1000);
+                            var coffee = _coffeeFactory.Create(coffeeNumber);
+                            Console.WriteLine(coffee.Make());
+
+                            Thread.Sleep(2000);
                             Console.WriteLine("Coffee is ready! please take");
                         }
                     }

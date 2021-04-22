@@ -1,4 +1,5 @@
-﻿using CoffeeMachine.Client.Infrastructure.Data;
+﻿using CoffeeMachine.Client.Factory;
+using CoffeeMachine.Client.Infrastructure.Data;
 using CoffeeMachine.Client.Infrastructure.Data.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ namespace CoffeeMachine.Client
             var provider = new ServiceCollection()
                 .AddSingleton<IProductDL, ProductDL>()
                 .AddSingleton<IStoreDL, StoreDL>()
+                .AddSingleton<ICoffeeFactory, CoffeeFactory>()
                 .AddSingleton<ICoffeeMachineManager, CoffeeMachineManager>()
                 .BuildServiceProvider();
 
