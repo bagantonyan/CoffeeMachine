@@ -15,6 +15,7 @@ namespace CoffeeMachine.Client
         {
             var provider = new ServiceCollection()
                 .AddSingleton<IProductDL, ProductDL>()
+                .AddSingleton<IStoreDL, StoreDL>()
                 .AddSingleton<ICoffeeMachineManager, CoffeeMachineManager>()
                 .BuildServiceProvider();
 

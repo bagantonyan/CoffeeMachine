@@ -5,10 +5,10 @@ using System.Text;
 
 namespace CoffeeMachine.Client.Infrastructure.Data.Interfaces
 {
-    public interface IProductDL
+    public interface IStoreDL
     {
-        IEnumerable<Product> GetAllProducts();
-        Product GetProductById(int id);
+        void TakeIngridients(Store store, Product product);
+        Store GetStore();
         void UpdateTest();
     }
 }
