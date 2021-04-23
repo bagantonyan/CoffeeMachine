@@ -4,6 +4,7 @@ using System.Text;
 
 namespace CoffeeMachine.Client.Factory
 {
+    // simple factory pattern
     public class CoffeeFactory : ICoffeeFactory
     {
         public ICoffee Create(int coffeeNumber)

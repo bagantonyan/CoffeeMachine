@@ -17,36 +17,6 @@ namespace CoffeeMachine.Client.Infrastructure.Data
             _connectionString = Startup.GetDbConnection();
         }
 
-        public void TakeIngridients(Store store, Product product)
-        {
-            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
-            {
-                try
-                {
-                    string query = @"UPDATE Store SET Water = @Water, Sugar = @Sugar, Coffee = @Coffee WHERE Id = 1";
-
-                    using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                    {
-                        connection.Open();
-
-                        double water = store.Water - product.Water;
-                        double sugar = store.Sugar - product.Sugar;
-                        double coffee = store.Coffee - product.Coffee;
-
-                        command.Parameters.Add("@Water", DbType.Double).Value = water;
-                        command.Parameters.Add("@Sugar", DbType.Double).Value = sugar;
-                        command.Parameters.Add("@Coffee", DbType.Double).Value = coffee;
-
-                        command.ExecuteNonQuery();
-                    }
-                }
-                catch (SQLiteException ex)
-                {
-                    throw ex;
-                }
-            }
-        }
-
         public Store GetStore()
         {
             var store = new Store();
@@ -81,6 +51,57 @@ namespace CoffeeMachine.Client.Infrastructure.Data
             }
 
             return store;
+        }
+
+        public void TakeIngridients(Store store, Product product)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                try
+                {
+                    string query = @"UPDATE Store SET Water = @Water, Sugar = @Sugar, Coffee = @Coffee WHERE Id = 1";
+
+                    using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                    {
+                        connection.Open();
+
+                        double water = store.Water - product.Water;
+                        double sugar = store.Sugar - product.Sugar;
+                        double coffee = store.Coffee - product.Coffee;
+
+                        command.Parameters.Add("@Water", DbType.Double).Value = water;
+                        command.Parameters.Add("@Sugar", DbType.Double).Value = sugar;
+                        command.Parameters.Add("@Coffee", DbType.Double).Value = coffee;
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (SQLiteException ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public void RechargeMachine()
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
+            {
+                try
+                {
+                    string query = @"UPDATE Store SET Water = 5, Sugar = 5, Coffee = 5 WHERE Id = 1";
+
+                    using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (SQLiteException ex)
+                {
+                    throw ex;
+                }
+            }
         }
     }
 }

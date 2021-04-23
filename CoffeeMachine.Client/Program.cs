@@ -18,7 +18,7 @@ namespace CoffeeMachine.Client
 
             var manager = container.GetRequiredService<ICoffeeMachineManager>();
 
-            manager.Start();
+            manager.Execute();
         }
     }
 }

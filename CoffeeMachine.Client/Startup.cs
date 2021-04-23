@@ -12,6 +12,7 @@ namespace CoffeeMachine.Client
 {
     public class Startup
     {
+        // add dependencies
         public static IServiceProvider ConfigureServices()
         {
             var provider = new ServiceCollection()
@@ -24,6 +25,7 @@ namespace CoffeeMachine.Client
             return provider;
         }
 
+        // add appsettings.json and get connection string
         public static string GetDbConnection()
         {
             var builder = new ConfigurationBuilder()

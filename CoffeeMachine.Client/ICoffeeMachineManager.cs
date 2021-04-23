@@ -6,8 +6,8 @@ namespace CoffeeMachine.Client
 {
     public interface ICoffeeMachineManager
     {
-        void Start();
+        void Execute();
         void EnterCoins();
-        void ChooseCoffee();
+        void StartCoffeeMachine();
     }
 }

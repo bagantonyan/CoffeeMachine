@@ -23,92 +23,164 @@ namespace CoffeeMachine.Client
             _storeDL = container.GetRequiredService<IStoreDL>();
             _coffeeFactory = container.GetRequiredService<ICoffeeFactory>();
         }
-        public void Start()
+
+        public void Execute()
         {
-            EnterCoins();
-            ChooseCoffee();
+            StartCoffeeMachine();
         }
 
+        // method for entering coins in coffee machine
         public void EnterCoins()
         {
             var coins = new List<decimal> { 50, 100, 200, 500 };
 
-            Console.WriteLine("Welcome to coffee machine program!");
-            Console.WriteLine("Please enter coin(s), (50, 100, 200, 500) - only mentioned coins can be entered");
-            Console.WriteLine("if it's enougth just press 'Enter' key");
+            Console.WriteLine("==> Please enter coin(s), (50, 100, 200, 500)\n"+
+                              "==> only mentioned coins can be entered\n"+
+                              "==> if it's enough just enter 0\n");
+
             string input;
             decimal coin;
 
             do
             {
-                Console.WriteLine($"Balance - {balance}");
-                Console.Write("===== Insert coin => ");
+                Console.Write("==> Insert coin => ");
                 input = Console.ReadLine();
                 bool isNumber = decimal.TryParse(input, out coin);
 
                 if (isNumber && coins.Contains(coin))
                 {
                     balance += coin;
-                    continue;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"---Balance - {balance}");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
-                else if (!string.IsNullOrWhiteSpace(input))
+                else if (input == "0")
                 {
-                    Console.WriteLine("Sorry, but wrong coin or invalid value has been entered.");
-                    Console.WriteLine("Please try again, or tap 'Enter' key to choose a coffee.");
+                    if (balance == 0)
+                        Console.WriteLine("---Your balance is 0, please insert coins");
+                    else
+                        break;
                 }
-            } while (!string.IsNullOrWhiteSpace(input));
+                else
+                {
+                    Console.WriteLine("---Sorry, but wrong coin or invalid value has been entered.");
+                    Console.WriteLine("---Please try again, or tap 'Enter' key to choose a coffee.");
+                }
+            } while (input != "0" || balance == 0);
         }
 
-        public void ChooseCoffee()
+        // method for executing the logic of coffee machine work
+        public void StartCoffeeMachine()
         {
-            string input;
-            int coffeeNumber;
-            var products = _productDL.GetAllProducts();
-
-            Console.WriteLine("Please, choose the coffee (enter the coffee number from 1-10)");
-
-            foreach (var product in products)
-            {
-                Console.WriteLine($"1 ==> {product.Name} - {product.Price} dram");
-            }
-
             do
             {
-                Console.Write("Enter the number of coffee ==> ");
-                input = Console.ReadLine();
-                bool isNumber = int.TryParse(input, out coffeeNumber);
+                Console.WriteLine();
+                EnterCoins();
 
-                if (isNumber && coffeeNumber >= 1 && coffeeNumber <= 10)
+                string input;
+                int coffeeNumber;
+                var products = _productDL.GetAllProducts();
+
+                Console.WriteLine();
+                Console.WriteLine("==> Please, choose the coffee\n" +
+                                  "==> Enter the coffee number from 1-10\n" +
+                                  "==> Or Enter 0 to take your money back");
+                Console.WriteLine();
+
+                foreach (var product in products)
                 {
-                    var product = _productDL.GetProductById(coffeeNumber);
+                    Console.WriteLine($"{product.Id} ==> {product.Name} - {product.Price} dram");
+                }
 
-                    if (balance < product.Price)
+                Console.WriteLine();
+
+                do
+                {
+                    Console.Write($"Enter the number of coffee ");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write($"(Balance - {balance})");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write(" ==> ");
+
+                    input = Console.ReadLine();
+                    bool isNumber = int.TryParse(input, out coffeeNumber);
+
+                    if (isNumber && coffeeNumber >= 1 && coffeeNumber <= 10)
                     {
-                        Console.WriteLine("Not enough money!");
+                        var product = _productDL.GetProductById(coffeeNumber);
+
+                        if (balance < product.Price)
+                        {
+                            Console.WriteLine("---Not enough money!");
+                            Console.WriteLine("---Choose another coffee,\n" +
+                                              "---Or enter '0' to take a money\n" +
+                                              "---Or enter 'c' to insert coins\n");
+                        }
+                        else
+                        {
+                            var store = _storeDL.GetStore();
+
+                            if (store.Water >= product.Water && store.Sugar >= product.Sugar && store.Coffee >= product.Coffee)
+                            {
+                                _storeDL.TakeIngridients(store, product);
+                                balance -= product.Price;
+
+                                var coffee = _coffeeFactory.Create(coffeeNumber);
+                                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                Console.WriteLine(coffee.Make());
+                                Console.ForegroundColor = ConsoleColor.White;
+
+
+                                Thread.Sleep(2000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"{product.Name} is ready! please take\n");
+                                Console.ForegroundColor = ConsoleColor.White;
+
+                                if (balance == 0)
+                                {
+                                    Console.WriteLine("---Your balance is 0\n");
+                                    break;
+                                }
+
+                                Console.WriteLine("---Choose another coffee,\n" +
+                                                  "---Or enter '0' to take a money\n" +
+                                                  "---Or enter 'c' to insert coins\n");
+                            }
+                            else
+                            {
+                                Console.WriteLine("---Not enough ingridients to make a coffee");
+                                Console.WriteLine("---You can choose another coffee,\n" +
+                                                  "---or enter '0' to take a money,\n" +
+                                                  "---or enter 'r' to recharge the machine with ingridients\n");
+                            }
+                        }
+                    }
+                    else if (input == "0")
+                    {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine($"---Take your change - {balance} dram\n");
+                        Console.ForegroundColor = ConsoleColor.White;
+
+                        balance = 0;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(input) && input != "r" && input != "c")
+                    {
+                        Console.WriteLine("---Sorry, but wrong number or invalid value has been entered.");
+                        Console.WriteLine("---Please try again, or tap 'Enter' key to take a change.");
+                    }
+                    else if(input == "r")
+                    {
+                        _storeDL.RechargeMachine();
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine("---Coffee machine has been recharged with ingridients\n");
+                        Console.ForegroundColor = ConsoleColor.White;
                     }
                     else
                     {
-                        var store = _storeDL.GetStore();
-
-                        if (store.Water >= product.Water && store.Sugar >= product.Sugar && store.Coffee >= product.Coffee)
-                        {
-                            _storeDL.TakeIngridients(store,product);
-                            balance -= product.Price;
-
-                            var coffee = _coffeeFactory.Create(coffeeNumber);
-                            Console.WriteLine(coffee.Make());
-
-                            Thread.Sleep(2000);
-                            Console.WriteLine("Coffee is ready! please take");
-                        }
+                        break;
                     }
-                }
-                else if (!string.IsNullOrWhiteSpace(input))
-                {
-                    Console.WriteLine("Sorry, but wrong number or invalid value has been entered.");
-                    Console.WriteLine("Please try again, or tap 'Enter' key to take a change.");
-                }
-            } while (!string.IsNullOrWhiteSpace(input));
+                } while (!string.IsNullOrWhiteSpace(input) && input != "0");
+            } while (true);
         }
     }
 }
