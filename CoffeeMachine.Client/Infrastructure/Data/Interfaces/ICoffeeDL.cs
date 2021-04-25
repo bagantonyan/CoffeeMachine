@@ -5,9 +5,9 @@ using System.Text;
 
 namespace CoffeeMachine.Client.Infrastructure.Data.Interfaces
 {
-    public interface IProductDL
+    public interface ICoffeeDL
     {
-        IEnumerable<Product> GetAllProducts();
-        Product GetProductById(int id);
+        IEnumerable<Coffee> GetAllCoffees();
+        Coffee GetCoffeeById(int id);
     }
 }

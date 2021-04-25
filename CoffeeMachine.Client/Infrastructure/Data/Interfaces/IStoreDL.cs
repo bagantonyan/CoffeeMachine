@@ -8,7 +8,7 @@ namespace CoffeeMachine.Client.Infrastructure.Data.Interfaces
     public interface IStoreDL
     {
         Store GetStore();
-        void TakeIngridients(Store store, Product product);
-        void RechargeMachine();
+        void TakeIngridients(Coffee product);
+        void RechargeStore();
     }
 }

@@ -8,6 +8,6 @@ namespace CoffeeMachine.Client.Infrastructure.Models
     {
         public double Water { get; set; }
         public double Sugar { get; set; }
-        public double Coffee { get; set; }
+        public double Coffees { get; set; }
     }
 }

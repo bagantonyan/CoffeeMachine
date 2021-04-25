@@ -5,18 +5,24 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SQLite;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace CoffeeMachine.Client
 {
     public class Startup
     {
-        // add dependencies
+        /// <summary>
+        /// Adds dependencies
+        /// </summary>
+        /// <returns></returns>
         public static IServiceProvider ConfigureServices()
         {
             var provider = new ServiceCollection()
-                .AddSingleton<IProductDL, ProductDL>()
+                .AddSingleton<ICoffeeDL, CoffeeDL>()
                 .AddSingleton<IStoreDL, StoreDL>()
                 .AddSingleton<ICoffeeFactory, CoffeeFactory>()
                 .AddSingleton<ICoffeeMachineManager, CoffeeMachineManager>()
@@ -25,14 +31,15 @@ namespace CoffeeMachine.Client
             return provider;
         }
 
-        // add appsettings.json and get connection string
+        /// <summary>
+        /// Makes and returns the connection string
+        /// </summary>
+        /// <returns></returns>
         public static string GetDbConnection()
         {
-            var builder = new ConfigurationBuilder()
-                                .SetBasePath(Directory.GetCurrentDirectory())
-                                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            string path = Path.GetFullPath("CoffeeMachineDB.db");
 
-            string strConnection = builder.Build().GetConnectionString("DefaultConnection");
+            string strConnection = "Data Source=" + path.Split(new string[] { "bin" }, StringSplitOptions.None)[0] + "CoffeeMachineDB.db";
 
             return strConnection;
         }

@@ -10,24 +10,24 @@ using System.Text;
 
 namespace CoffeeMachine.Client.Infrastructure.Data
 {
-    public class ProductDL : IProductDL
+    public class CoffeeDL : ICoffeeDL
     {
         private readonly string _connectionString;
 
-        public ProductDL()
+        public CoffeeDL()
         {
             _connectionString = Startup.GetDbConnection();
         }
 
-        public IEnumerable<Product> GetAllProducts()
+        public IEnumerable<Coffee> GetAllCoffees()
         {
-            var products = new List<Product>();
+            var coffees = new List<Coffee>();
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
                 try
                 {
-                    string query = "SELECT * FROM Product";
+                    string query = "SELECT * FROM Coffee";
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection))
                     {
@@ -37,17 +37,17 @@ namespace CoffeeMachine.Client.Infrastructure.Data
 
                         if (reader.HasRows)
                         {
-                            Product product = null;
+                            Coffee coffee = null;
                             while (reader.Read())
                             {
-                                product = new Product();
-                                product.Id = reader.GetInt32(0);
-                                product.Name = reader.GetString(1);
-                                product.Water = reader.GetDouble(2);
-                                product.Sugar = reader.GetDouble(3);
-                                product.Coffee = reader.GetDouble(4);
-                                product.Price = reader.GetDecimal(5);
-                                products.Add(product);
+                                coffee = new Coffee();
+                                coffee.Id = reader.GetInt32(0);
+                                coffee.Name = reader.GetString(1);
+                                coffee.Water = reader.GetDouble(2);
+                                coffee.Sugar = reader.GetDouble(3);
+                                coffee.Coffees = reader.GetDouble(4);
+                                coffee.Price = reader.GetDecimal(5);
+                                coffees.Add(coffee);
                             }
                         }
 
@@ -59,18 +59,18 @@ namespace CoffeeMachine.Client.Infrastructure.Data
                     throw ex;
                 }
             }
-            return products;
+            return coffees;
         }
 
-        public Product GetProductById(int id)
+        public Coffee GetCoffeeById(int id)
         {
-            var product = new Product();
+            var coffee = new Coffee();
 
             using (SQLiteConnection connection = new SQLiteConnection(_connectionString))
             {
                 try
                 {
-                    string query = "SELECT * FROM Product WHERE Id = @Id";
+                    string query = "SELECT * FROM Coffee WHERE Id = @Id";
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection))
                     {
@@ -82,12 +82,12 @@ namespace CoffeeMachine.Client.Infrastructure.Data
 
                         if (reader.Read())
                         {
-                            product.Id = reader.GetInt32(0);
-                            product.Name = reader.GetString(1);
-                            product.Water = reader.GetDouble(2);
-                            product.Sugar = reader.GetDouble(3);
-                            product.Coffee = reader.GetDouble(4);
-                            product.Price = reader.GetDecimal(5);
+                            coffee.Id = reader.GetInt32(0);
+                            coffee.Name = reader.GetString(1);
+                            coffee.Water = reader.GetDouble(2);
+                            coffee.Sugar = reader.GetDouble(3);
+                            coffee.Coffees = reader.GetDouble(4);
+                            coffee.Price = reader.GetDecimal(5);
                         }
 
                         reader.Close();
@@ -98,7 +98,7 @@ namespace CoffeeMachine.Client.Infrastructure.Data
                     throw ex;
                 }
             }
-            return product;
+            return coffee;
         }
     }
 }
