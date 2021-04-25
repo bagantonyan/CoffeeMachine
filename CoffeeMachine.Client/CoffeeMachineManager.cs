@@ -139,7 +139,7 @@ namespace CoffeeMachine.Client
                     Console.WriteLine("---No coffee available\n" +
                                       "---Come and try later");
                     Console.ForegroundColor = ConsoleColor.White;
-                    return;
+                    Environment.Exit(0);
                 }
 
                 Console.WriteLine("---Choose coffee, availables are marked white\n" +
@@ -190,9 +190,11 @@ namespace CoffeeMachine.Client
                             }
                             else
                             {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
                                 Console.WriteLine("---Not enough ingridients\n" +
                                                   "---You can choose another coffee\n" +
                                                   "---Or enter '0' to take your change\n");
+                                Console.ForegroundColor = ConsoleColor.White;
                             }
                         }
                     }
